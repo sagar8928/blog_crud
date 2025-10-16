@@ -21,9 +21,7 @@ app.use(express.json());
 
 app.use(express.static(path.join(__dirname, '../public')));
 
-/* ===========================
-   📘 Get all blogs
-=========================== */
+// get all blogs
 app.get('/blogs', (req, res) => {
   db.query('SELECT * FROM blogs ORDER BY created_at DESC', (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -31,9 +29,7 @@ app.get('/blogs', (req, res) => {
   });
 });
 
-/* ===========================
-   📗 Get a single blog by ID
-=========================== */
+// get a single blog by id
 app.get('/blogs/:id', (req, res) => {
   const { id } = req.params;
   db.query('SELECT * FROM blogs WHERE id = ?', [id], (err, result) => {
@@ -44,9 +40,7 @@ app.get('/blogs/:id', (req, res) => {
   });
 });
 
-/* ===========================
-   🟢 Create a new blog
-=========================== */
+// create a new blog
 app.post('/blogs', (req, res) => {
   const { title, content } = req.body;
   if (!title || !content)
@@ -66,10 +60,7 @@ app.post('/blogs', (req, res) => {
     }
   );
 });
-
-/* ===========================
-   ✏️ Update a blog
-=========================== */
+// update a blog by id
 app.put('/blogs/:id', (req, res) => {
   const { id } = req.params;
   const { title, content } = req.body;
@@ -83,9 +74,7 @@ app.put('/blogs/:id', (req, res) => {
   );
 });
 
-/* ===========================
-   ❌ Delete a blog
-=========================== */
+// delete a blog by id
 app.delete('/blogs/:id', (req, res) => {
   const { id } = req.params;
   db.query('DELETE FROM blogs WHERE id=?', [id], (err, result) => {
@@ -94,9 +83,6 @@ app.delete('/blogs/:id', (req, res) => {
   });
 });
 
-/* ===========================
-   🚀 Start server
-=========================== */
 app.listen(PORT, () =>
   console.log(`🚀 Server running at http://localhost:${PORT}`)
 );
