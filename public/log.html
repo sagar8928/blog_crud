@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <div class="container">
+
+        <form id="login">
+            <label for="username">Username</label>
+            <input type="text" id ="username" placeholder ="Enter your username" required>
+            
+            <label for="password">Password</label>
+            <input type="password" id ="password" placeholder ="Enter your Password" required>
+            
+            <button type="submit" >Login</button>
+
+            
+
+            
+            <pre id="loginMessage"></pre>
+
+            
+            
+            
+        </form>
+        <pre id="profileText" style="display:none;" > Want to see your Profile </pre>
+        <button id="profileBtn" onclick="location.href='./profile.html'" style="display:none;" >Profile</button>
+        
+        <pre id="registerText" style="display:none;" >Don't have an account? </pre>
+        <button id="registerBtn" onclick="location.href='log.html'" style="display:none;" >Rgister</button>
+    </div>
+
+    <script>
+        const form = document.getElementById("login");
+        form.addEventListener("submit", async (e)=>{
+            e.preventDefault();
+            const username =document.getElementById("username").value
+            const password = document.getElementById("password").value
+            
+            const res = await fetch("http://localhost:4000/api/login", {
+                method: "post",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({username, password})
+                
+            });
+            const data =await res.json();
+            const message = document.getElementById("loginMessage").innerHTML= data.message;
+            if(data.success){
+                localStorage.setItem("token", data.token); // verify it
+
+                   function showProfile(){
+                    document.querySelector("#profileText").style.display="block";
+                    document.querySelector("#profileBtn").style.display="inline-block";
+                   }
+                   showProfile();
+
+                }
+
+                document.querySelector("#profileBtn").addEventListener("click", function(){
+
+                    setTimeout(() => {
+                           window.location.href = "./profile.html"; // change to your target page
+                        }, 1000); // 1000ms = 1 seconds
+                })
+            });
+
+           
+    </script>
+</body>
+</html>

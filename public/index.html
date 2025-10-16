@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog CRUD</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <h2>My Blog App</h2>
+  </nav>
+
+  <section class="container">
+    <h3>Create Blog</h3>
+    <input type="text" id="title" placeholder="Enter title" />
+    <textarea id="content" placeholder="Enter content"></textarea>
+    <button onclick="createBlog()">Add Blog</button>
+  </section>
+
+  <section class="container">
+    <h3>All Blogs</h3>
+    <div id="blogs"></div>
+  </section>
+
+  <script >
+    const API_URL = "http://localhost:5000/blogs";
+
+// Fetch all blogs
+async function fetchBlogs() {
+  const res = await fetch(API_URL);
+  const blogs = await res.json();
+  const container = document.getElementById("blogs");
+  container.innerHTML = "";
+
+  blogs.forEach(blog => {
+    container.innerHTML += `
+      <div class="blog">
+        <h4>${blog.title}</h4>
+        <p>${blog.content}</p>
+        <button onclick="deleteBlog(${blog.id})">Delete</button>
+        <button onclick="editBlog(${blog.id}, '${blog.title}', '${blog.content.replace(/'/g, "\\'")}')">Edit</button>
+      </div>`; 
+  });
+}
+
+// Create new blog
+async function createBlog() {
+  const title = document.getElementById("title").value;
+  const content = document.getElementById("content").value;
+
+  await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title, content })
+  });
+  fetchBlogs();
+}
+
+// Delete blog
+async function deleteBlog(id) {
+  await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+  fetchBlogs();
+}
+
+// Edit blog (simple prompt version)
+async function editBlog(id, oldTitle, oldContent) {
+  const title = prompt("Edit Title", oldTitle);
+  const content = prompt("Edit Content", oldContent);
+
+  await fetch(`${API_URL}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title, content })
+  });
+  fetchBlogs();
+}
+
+fetchBlogs();
+
+  </script>
+</body>
+</html>
